@@ -1,0 +1,25 @@
+services:
+  api:
+    build: .
+    container_name: buchi-api
+    environment:
+      - BUCHI_MONGODB_URI=mongodb://mongo:27017
+      - BUCHI_MONGODB_DB=buchi
+      - BUCHI_BASE_URL=http://localhost:8000
+      - BUCHI_PHOTO_DIR=/app/app/storage/photos
+      - BUCHI_DOG_API_KEY=${DOG_API_KEY:-}
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:7
+    container_name: buchi-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:
