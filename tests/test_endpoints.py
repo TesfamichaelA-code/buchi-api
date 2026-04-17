@@ -118,9 +118,6 @@ async def test_generate_report_rejects_inverted_dates() -> None:
 
 @pytest.mark.asyncio
 async def test_add_customer_idempotent() -> None:
-    if not await _mongo_available():
-        pytest.skip("MongoDB not available for integration-style tests.")
-
     from app.core.db import get_db
 
     async with _make_client() as ac:
@@ -141,9 +138,6 @@ async def test_add_customer_idempotent() -> None:
 
 @pytest.mark.asyncio
 async def test_create_pet_then_get_pets_local_first() -> None:
-    if not await _mongo_available():
-        pytest.skip("MongoDB not available for integration-style tests.")
-
     from app.core.db import get_db
 
     async with _make_client() as ac:
@@ -183,9 +177,6 @@ async def test_create_pet_then_get_pets_local_first() -> None:
 
 @pytest.mark.asyncio
 async def test_adopt_flow_and_get_adoption_requests() -> None:
-    if not await _mongo_available():
-        pytest.skip("MongoDB not available for integration-style tests.")
-
     from app.core.db import get_db
 
     async with _make_client() as ac:

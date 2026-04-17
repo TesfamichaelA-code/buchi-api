@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from dataclasses import dataclass
 
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
@@ -17,13 +18,31 @@ class Collections:
 COLLECTIONS = Collections()
 
 _client: AsyncIOMotorClient | None = None
+_client_loop_id: int | None = None
 
 
 def get_client() -> AsyncIOMotorClient:
-    global _client
-    if _client is None:
+    global _client, _client_loop_id
+
+    try:
+        current_loop_id = id(asyncio.get_running_loop())
+    except RuntimeError:
+        current_loop_id = None
+
+    if _client is None or (_client_loop_id is not None and current_loop_id is not None and _client_loop_id != current_loop_id):
+        if _client is not None:
+            _client.close()
         _client = AsyncIOMotorClient(settings.mongodb_uri)
+        _client_loop_id = current_loop_id
     return _client
+
+
+def close_client() -> None:
+    global _client, _client_loop_id
+    if _client is not None:
+        _client.close()
+        _client = None
+        _client_loop_id = None
 
 
 def get_db() -> AsyncIOMotorDatabase:
